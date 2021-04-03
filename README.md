@@ -9,3 +9,7 @@ Personnellement, j'édite les fichiers de ressources en utilisant [Resource Hack
 ## Compteur
 
 ![screenshot](compteur/prévisualisation.gif)
+
+## Convertisseur de Tempèrateur
+
+![screenshot](convertisseur/prévisualisation.gif)

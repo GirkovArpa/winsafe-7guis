@@ -11,3 +11,4 @@ codegen-units = 1
 
 [dependencies]
 winsafe = "0.0.2"
+chrono = "*"

@@ -3,6 +3,8 @@ use winsafe::WinResult;
 
 use chrono::{NaiveDate, Datelike};
 
+mod my_modal;
+
 #[derive(Clone)]
 pub struct MyWindow {
   wnd: gui::WindowMain,
@@ -38,6 +40,22 @@ impl MyWindow {
           myself.cmb.items().set_selected(i);
           true
         }
+    });
+
+    self.btn.on().bn_clicked({
+      let myself = self.clone();
+      move || {
+        let selection = myself.cmb.items().selected_text().unwrap();
+        let date_string_one = myself.one.text().unwrap();
+        let input_text = if selection == "one-way flight" {
+          format!("You've booked a one-way flight on {}.", date_string_one)
+        } else {
+          let date_string_ret = myself.ret.text().unwrap();
+          format!("You've booked a return flight from {} to {}.", date_string_one, date_string_ret)
+        };
+        let my_modal = my_modal::MyModal::new(&myself.wnd, &input_text);
+        my_modal.show();
+      }
     });
 
     self.cmb.on().cbn_sel_change({

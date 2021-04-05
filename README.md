@@ -16,4 +16,20 @@ Personnellement, j'édite les fichiers de ressources en utilisant [Resource Hack
 
 ## Organisateur de Vols
 
+:information_source: Fond rouge pour les entrées non valides non mises en œuvre. :information_source:
+
 ![screenshot](organisateur/prévisualisation.gif)
+
+## Minuterie
+
+:construction: En construction ! :construction:
+
+![screenshot](minuterie/prévisualisation.png)
+
+## CRUD 
+
+:information_source: Filtre non implémenté. :information_source: 
+
+:construction: En construction ! :construction:
+
+![screenshot](crud/prévisualisation.gif)

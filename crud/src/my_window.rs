@@ -4,12 +4,15 @@ use winsafe::WinResult;
 #[derive(Clone)]
 pub struct MyWindow {
   wnd: gui::WindowMain,
+  frst_label: gui::Label,
+  last_label: gui::Label,
   lst: gui::ListBox,
   crt: gui::Button,
   upd: gui::Button,
   del: gui::Button,
   frst: gui::Edit,
   last: gui::Edit,
+  resizer: gui::Resizer,
 }
 
 impl MyWindow {
@@ -20,8 +23,11 @@ impl MyWindow {
     let upd = gui::Button::new_dlg(&wnd, 8);
     let del = gui::Button::new_dlg(&wnd, 9);
     let frst = gui::Edit::new_dlg(&wnd, 5);
+    let frst_label = gui::Label::new_dlg(&wnd, 3);
+    let last_label = gui::Label::new_dlg(&wnd, 4);
     let last = gui::Edit::new_dlg(&wnd, 6);
-    let new_self = Self { wnd, lst, crt, upd, del, frst, last };
+    let resizer = gui::Resizer::new(&wnd);
+    let new_self = Self { wnd, lst, crt, upd, del, frst, last, frst_label, last_label, resizer };
     new_self.events();
     new_self
   }
@@ -46,6 +52,16 @@ impl MyWindow {
             prefix: "Tisch, Roman"
           }
         }).unwrap();
+
+        myself.resizer
+          .add(gui::Resz::Resize, gui::Resz::Resize, &[&myself.lst])
+          .add(gui::Resz::Repos, gui::Resz::Nothing, &[&myself.frst])
+          .add(gui::Resz::Repos, gui::Resz::Nothing, &[&myself.last])
+          .add(gui::Resz::Repos, gui::Resz::Nothing, &[&myself.frst_label])
+          .add(gui::Resz::Repos, gui::Resz::Nothing, &[&myself.last_label])
+          .add(gui::Resz::Nothing, gui::Resz::Repos, &[&myself.crt])
+          .add(gui::Resz::Nothing, gui::Resz::Repos, &[&myself.upd])
+          .add(gui::Resz::Nothing, gui::Resz::Repos, &[&myself.del]);
 
         true
       }
@@ -76,7 +92,13 @@ impl MyWindow {
         let frst: String = myself.frst.text().unwrap();
         let last: String = myself.last.text().unwrap();
         let name = format!("{}, {}", last, frst);
-        myself.lst.items().add(&[&name]);
+
+        lst_hwnd.SendMessage({
+          winsafe::msg::lb::InsertString { 
+            text: &name
+            // index
+          }
+        }).unwrap();
 
         lst_hwnd.SendMessage({
           winsafe::msg::lb::SelectString { 

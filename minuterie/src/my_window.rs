@@ -5,15 +5,13 @@ use winsafe::WinResult;
 pub struct MyWindow {
   wnd: gui::WindowMain,
   btn: gui::Button,
-  prg: gui::ProgressCTL1
 }
 
 impl MyWindow {
   pub fn new() -> MyWindow {
     let wnd = gui::WindowMain::new_dlg(1000, Some(101), None);
     let btn = gui::Button::new_dlg(&wnd, 5);
-    let prg = gui::Progress::new_dlg(&wnd, 1);
-    let new_self = Self { wnd, btn, prg };
+    let new_self = Self { wnd, btn };
     new_self.events();
     new_self
   }

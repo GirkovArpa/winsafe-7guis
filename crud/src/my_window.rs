@@ -39,6 +39,14 @@ impl MyWindow {
           "Mustermann, Max", 
           "Tisch, Roman"
         ]);
+
+        myself.lst.hwnd().SendMessage({
+          winsafe::msg::lb::SelectString { 
+            index: Some(0),
+            prefix: "Tisch, Roman"
+          }
+        }).unwrap();
+
         true
       }
     });
@@ -53,10 +61,63 @@ impl MyWindow {
       }
     });
 
+    self.upd.on().bn_clicked({
+      let myself = self.clone();
+      move || {
+        let lst_hwnd = myself.lst.hwnd();
+
+        let list_box_item = get_selected_item(lst_hwnd).unwrap();
+
+        let index = list_box_item.index;
+        lst_hwnd.SendMessage({
+          winsafe::msg::lb::DeleteString { index }
+        }).unwrap();
+
+        let frst: String = myself.frst.text().unwrap();
+        let last: String = myself.last.text().unwrap();
+        let name = format!("{}, {}", last, frst);
+        myself.lst.items().add(&[&name]);
+
+        lst_hwnd.SendMessage({
+          winsafe::msg::lb::SelectString { 
+            index: Some(index),
+            prefix: &name
+          }
+        }).unwrap();
+
+      }
+    });
+
+    self.del.on().bn_clicked({
+      let myself = self.clone();
+      move || {
+        let lst_hwnd = myself.lst.hwnd();
+
+        let index =  get_selected_item(lst_hwnd).unwrap().index;
+
+        lst_hwnd.SendMessage({
+          winsafe::msg::lb::DeleteString { 
+            index
+          }
+        }).unwrap();
+
+        myself.upd.hwnd().EnableWindow(false);
+        myself.del.hwnd().EnableWindow(false);
+      }
+    });
+
     self.lst.on().lbn_sel_change({
       let myself = self.clone();
       move || {
-        let list_box_item = get_selected_item(myself.lst.hwnd());
+        let lst_hwnd = myself.lst.hwnd();
+
+        let list_box_item = match get_selected_item(lst_hwnd) {
+          Some(list_box_item) => list_box_item,
+          None => return
+        };
+
+        myself.upd.hwnd().EnableWindow(true);
+        myself.del.hwnd().EnableWindow(true);
 
         myself.frst.set_text(&list_box_item.name.first).unwrap();
         myself.last.set_text(&list_box_item.name.last).unwrap();
@@ -75,10 +136,13 @@ struct FullName {
   last: String
 }
 
-fn get_selected_item(lst_hwnd: winsafe::HWND) -> ListBoxItem {
-  let index = lst_hwnd.SendMessage({
+fn get_selected_item(lst_hwnd: winsafe::HWND) -> Option<ListBoxItem> {
+  let index = match lst_hwnd.SendMessage({
       winsafe::msg::lb::GetCurSel {}
-  }).unwrap();
+  }) {
+    Some(index) => index,
+    None => return None,
+  };
 
   let len = lst_hwnd.SendMessage({
     winsafe::msg::lb::GetTextLen { index }
@@ -93,9 +157,9 @@ fn get_selected_item(lst_hwnd: winsafe::HWND) -> ListBoxItem {
   let mut names = fullname.split(", ");
 
   let name = FullName { 
-    first: String::from(names.next().unwrap()), 
-    last: String::from(names.next().unwrap()) 
+    last: String::from(names.next().unwrap()), 
+    first: String::from(names.next().unwrap()) 
   };
   
-  ListBoxItem { index, name }
+  Some(ListBoxItem { index, name })
 }

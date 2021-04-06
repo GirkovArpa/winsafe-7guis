@@ -3,8 +3,6 @@ use winsafe::WinResult;
 
 use chrono::{NaiveDate, Datelike};
 
-mod my_modal;
-
 #[derive(Clone)]
 pub struct MyWindow {
   wnd: gui::WindowMain,
@@ -53,8 +51,11 @@ impl MyWindow {
           let date_string_ret = myself.ret.text().unwrap();
           format!("You've booked a return flight from {} to {}.", date_string_one, date_string_ret)
         };
-        let my_modal = my_modal::MyModal::new(&myself.wnd, &input_text);
-        my_modal.show();
+        myself.wnd.hwnd().MessageBox(
+          &input_text,
+          "Organisateur",
+          winsafe::co::MB::OK | winsafe::co::MB::ICONINFORMATION
+        ).unwrap();
       }
     });
 

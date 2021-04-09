@@ -22,9 +22,9 @@ Personnellement, j'édite les fichiers de ressources en utilisant [Resource Hack
 
 ## Minuterie
 
-:construction: En construction ! :construction:
+:construction: Uses local clone of winsafe as a dependency! :construction:
 
-![screenshot](minuterie/prévisualisation.png)
+![screenshot](minuterie/prévisualisation.gif)
 
 ## CRUD 
 

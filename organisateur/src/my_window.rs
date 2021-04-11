@@ -33,7 +33,7 @@ impl MyWindow {
     self.wnd.on().wm_init_dialog({
       let myself = self.clone();
         move |_| {
-          myself.cmb.items().add(&["one-way flight", "return flight"]).unwrap();
+          myself.cmb.items().add(&["vol aller simple", "vol retour"]).unwrap();
           let i: Option<u32> = Some(0);
           myself.cmb.items().set_selected(i);
           true
@@ -45,11 +45,11 @@ impl MyWindow {
       move || {
         let selection = myself.cmb.items().selected_text().unwrap();
         let date_string_one = myself.one.text().unwrap();
-        let input_text = if selection == "one-way flight" {
-          format!("You've booked a one-way flight on {}.", date_string_one)
+        let input_text = if selection == "vol aller simple" {
+          format!("Vous avez réservé un vol aller simple le {}.", date_string_one)
         } else {
           let date_string_ret = myself.ret.text().unwrap();
-          format!("You've booked a return flight from {} to {}.", date_string_one, date_string_ret)
+          format!("Vous avez réservé un vol aller-retour du {} au {}.", date_string_one, date_string_ret)
         };
         myself.wnd.hwnd().MessageBox(
           &input_text,
@@ -64,7 +64,7 @@ impl MyWindow {
 
       move || {
         let selection = wnd.cmb.items().selected_text().unwrap();
-        wnd.ret.hwnd().EnableWindow(selection != "one-way flight");
+        wnd.ret.hwnd().EnableWindow(selection != "vol aller simple");
 
         wnd.btn.hwnd().EnableWindow(validate(wnd.to_owned()));
       }
@@ -103,7 +103,7 @@ fn validate(wnd: MyWindow) -> bool {
 
     // validation of second edit if return flight is selected
     let selection = cmb.items().selected_text().unwrap();
-    if selection == "return flight" {
+    if selection == "vol retour" {
       let date_string_ret = ret.text().unwrap();
       let date_struct_ret = match NaiveDate::parse_from_str(&date_string_ret, "%d.%m.%Y") {
         Ok(val) => val,
